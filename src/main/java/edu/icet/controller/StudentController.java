@@ -20,7 +20,7 @@ public class StudentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void setStudent(@ModelAttribute Student student) {
+    public void setStudent(@RequestBody Student student) {
         System.out.println(student);
         studentService.addStudent(student);
     }
