@@ -21,14 +21,20 @@ public class StudentEntity {
     private String firstName;
     private String lastName;
     private LocalDate dateOfBirth;
+    private String gender;
+    private String nationality;
     private String email;
     private String mobileNumber;
-    private String gender;
     private String address;
     private String city;
+    private String province;
     private String postalCode;
+    private String country;
     private String guardiansName;
-    private String guardiansAddress;
     private String guardiansPhoneNumber;
     private String guardiansEmail;
+    private String signature;
+    private LocalDate date;
+    private String imageName;
+    private String imagePath;
 }

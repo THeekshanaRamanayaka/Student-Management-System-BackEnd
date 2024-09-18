@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -20,14 +22,14 @@ public class StudentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void setStudent(@RequestBody Student student) {
+    public void setStudent(@ModelAttribute Student student, @RequestPart("file") MultipartFile file) throws IOException {
         System.out.println(student);
-        studentService.addStudent(student);
+        studentService.addStudent(student, file);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateStudent(@ModelAttribute Student student, @PathVariable Long id) {
-        return studentService.updateStudent(id, student)?
+    public ResponseEntity<String> updateStudent(@ModelAttribute Student student, @PathVariable Long id, @RequestPart("file") MultipartFile file) throws IOException {
+        return studentService.updateStudent(id, student, file)?
                 ResponseEntity.ok("Student updated successfully"):
                 ResponseEntity.notFound().build();
     }

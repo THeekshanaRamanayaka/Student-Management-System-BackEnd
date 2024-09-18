@@ -9,7 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -27,11 +30,16 @@ public class StudentServiceImpl implements StudentService {
         this.mapper = new ModelMapper();
     }
 
+    private static final String URL = "https://drive.google.com/drive/folders/11C1Y1pAYEdpQAde1QV0H6i2C3tZiF-kf?usp=sharing";
+
     @Override
-    public void addStudent(Student student) {
+    public void addStudent(Student student, MultipartFile file) throws IOException {
+        String filePath = URL + file.getOriginalFilename();
         StudentEntity entity = mapper.map(student, StudentEntity.class);
-        System.out.println(entity);
+        entity.setImageName(file.getOriginalFilename());
+        entity.setImagePath(filePath);
         repository.save(entity);
+        file.transferTo(new File(filePath));
     }
 
     @Override
@@ -49,10 +57,14 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public boolean updateStudent(Long id, Student student) {
+    public boolean updateStudent(Long id, Student student, MultipartFile file) throws IOException {
         if (repository.findById(id).isPresent()) {
             StudentEntity entity = mapper.map(student, StudentEntity.class);
+            String filePath = URL + file.getOriginalFilename();
+            entity.setImageName(file.getOriginalFilename());
+            entity.setImagePath(filePath);
             repository.save(entity);
+            file.transferTo(new File(filePath));
             return true;
         } else {
             return false;
