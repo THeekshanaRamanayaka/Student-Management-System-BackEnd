@@ -1,58 +1,51 @@
 package edu.icet.controller;
 
-import edu.icet.dao.StudentEntity;
 import edu.icet.dto.Student;
 import edu.icet.service.StudentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 
-@RequiredArgsConstructor
-@RestController
 @CrossOrigin
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/student")
 public class StudentController {
 
     final StudentService studentService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void setStudent(@ModelAttribute Student student, @RequestPart("file") MultipartFile file) throws IOException {
+    @PostMapping("/addStudent")
+    public void addStudent(@RequestPart("student") Student student, @RequestPart("image") MultipartFile file) throws IOException {
         System.out.println(student);
-        studentService.addStudent(student, file);
+        try {
+            student.setImage(file.getBytes());
+            studentService.addStudent(student);
+        } catch (Exception e) {
+            System.out.println("error");
+        }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateStudent(@ModelAttribute Student student, @PathVariable Long id, @RequestPart("file") MultipartFile file) throws IOException {
-        return studentService.updateStudent(id, student, file)?
-                ResponseEntity.ok("Student updated successfully"):
-                ResponseEntity.notFound().build();
+    @GetMapping("/searchByID/{id}")
+    public Student searchStudent(@PathVariable Integer id) {
+        return studentService.searchStudentById(id);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteStudent(@PathVariable Long id) {
-        return studentService.deleteStudent(id)?
-                ResponseEntity.ok("Student delete successfully"):
-                ResponseEntity.notFound().build();
+    @DeleteMapping("/deleteStudent/{id}")
+    public void deleteStudent(@PathVariable Integer id) {
+        studentService.deleteStudentById(id);
     }
 
-    @GetMapping
-    public List<Student> getAllStudent() {
-        return studentService.getAllStudent();
+    @PatchMapping("/updateStudent")
+    public void updateStudent(@RequestPart("student") Student student, @RequestPart("image") MultipartFile file) throws IOException {
+        student.setImage(file.getBytes());
+        studentService.updateStudent(student);
     }
 
-    @GetMapping("/{firstName}")
-    public Iterable<StudentEntity> getStudentByFirstName(@PathVariable String firstName) {
-        return studentService.getStudentByFirstName(firstName);
-    }
-
-    @GetMapping("/student-id/{id}")
-    public Student getStudentByFirstName(@PathVariable Long id) {
-        return studentService.getStudentById(id);
+    @GetMapping("/all")
+    public List<Student> getAllStudents() {
+        return studentService.findAllStudent();
     }
 }

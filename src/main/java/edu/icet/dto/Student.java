@@ -1,5 +1,6 @@
 package edu.icet.dto;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,8 +12,12 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Entity
+@Table(name = "Student")
 public class Student {
-    private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     private String firstName;
     private String lastName;
     private LocalDate dateOfBirth;
@@ -28,8 +33,7 @@ public class Student {
     private String guardiansName;
     private String guardiansPhoneNumber;
     private String guardiansEmail;
-    private String signature;
-    private LocalDate date;
-    private String imageName;
-    private String imagePath;
+    @Lob
+    @Column(name = "image", columnDefinition = "LONGBLOB")
+    private byte[] image;
 }
